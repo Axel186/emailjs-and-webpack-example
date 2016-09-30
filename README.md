@@ -30,6 +30,6 @@ Run `npm run install-all` to install all needed packages + proxy-server for work
 
 Then build the "dist" files with webpack: `npm run build`
 
-If you're want to use browser: `npm run server` and go to http://localhost:8889/
+If you're want to use browser: `npm run server` and go to `http://localhost:8889/`
 
 If you're want to use Electron: `npm run electron`
