@@ -18,7 +18,7 @@ This source is only example of ussing emailjs + webpack - it's not working clien
 **IMPORTANT** if you want to login with GMAIL account, you need to allow less secure apps access. Take a look at this link: https://support.google.com/accounts/answer/6010255?hl=en. Of course in your version you can add Google OAuth.
 
 
-![Example](https://raw.githubusercontent.com/Axel186/emailjs-and-webpack-example/edit/master/example.gif)
+![Example](https://raw.githubusercontent.com/Axel186/emailjs-and-webpack-example/master/example.gif)
 
 
 ## Installation
