@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html ng-app="emailjsApp">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+
+</head>
+
+<script type="text/javascript">
+  var ImapClient, SmtpClient;
+  if (window && window.process && window.process.type) {
+    ImapClient = require("emailjs-imap-client");
+    SmtpClient = require("emailjs-smtp-client");
+  } else {
+    document.write('<script src="socket.io/socket.io.js"></scr' + 'ipt>');
+  }
+</script>
+
+<body ng-controller="mainCtrl">
+  <div class="loading" ng-show="loading">
+    loading...
+  </div>
+
+  <div id="app" style="display: none;">
+
+    <div class="login" ng-if="!login.connected">
+      <header>
+        <nav class="navbar navbar-static-top navbar-dark bg-inverse">
+          <h1>Login</h1>
+        </nav>
+      </header>
+      <div class="container">
+        <form ng-submit="connect()">
+          <fieldset>
+            <legend>User details</legend>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input class="form-control" type="text" name="email" id="email" ng-model="login.email" placeholder="test@gmail.com" required="require">
+            </div>
+
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input class="form-control" type="password" name="password" id="password" ng-model="login.password" placeholder="******" required="require">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <div class="form-group">
+              <legend>IMAP details</legend>
+              <label for="imap-host">Host</label>
+              <input class="form-control" type="text" name="imap-host" id="imap-host" ng-model="login.imap.host" placeholder="imap.gmail.com" required="require">
+            </div>
+
+            <div class="form-group">
+              <label for="imap-port">Port</label>
+              <input class="form-control" type="number" name="imap-port" id="imap-port" ng-model="login.imap.port" placeholder="993" required="require">
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <div class="form-group">
+              <legend>SMTP details</legend>
+              <label for="smtp-host">Host</label>
+              <input class="form-control" type="text" name="smtp-host" id="smtp-host" ng-model="login.smtp.host" placeholder="smtp.gmail.com" required="require">
+            </div>
+
+            <div class="form-group">
+              <label for="smtp-port">Port</label>
+              <input class="form-control" type="number" name="smtp-port" id="smtp-port" ng-model="login.smtp.port" placeholder="587" required="require">
+            </div>
+          </fieldset>
+
+          <button type="submit" class="btn btn-primary">Connect</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mail" ng-if="login.connected">
+      <header class="navbar navbar-static-top navbar-dark bg-inverse">
+        <button type="button" class="btn btn-secondary pull-xs-right" ng-click="showComposeForm()">Compose</button>
+        <h1 ng-bind="login.email"></h1>
+      </header>
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Mailboxes</h2>
+          <nav>
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="mailbox in mailboxes" ng-class="(mailbox == selectedMailbox)? 'active':''" ng-click="selectMailbox(mailbox)" style="cursor: pointer">
+                <span class="tag tag-default tag-pill pull-xs-right" ng-bind="mailbox.exists" ng-show="mailbox == selectedMailbox"></span>
+                <span ng-bind="mailbox.name"></span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <div class="col-md-8">
+          <h2>Messages</h2>
+          <p>Page: 1 (1-<span ng-bind="selectedMailbox.messages.length"></span>)</p>
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat="message in selectedMailbox.messages" ng-bind="message.envelope.subject"></li>
+          </ul>
+
+          <p ng-if="selectedMailbox.messages.length < selectedMailbox.exists">
+            <a href="#/" ng-click="pullMessages();">Load more...</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="showCompose" class="compose">
+      <form ng-submit="sendMessage()">
+        <fieldset>
+          <legend>Compose message</legend>
+
+          <div class="form-group">
+            <label for="to">To</label>
+            <input class="form-control" type="text" name="to" id="to" ng-model="compose.to" placeholder="test@gmail.com">
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject</label>
+            <input class="form-control" type="subject" name="subject" id="text" ng-model="compose.subject" placeholder="How are you?">
+          </div>
+
+          <div class="form-group">
+            <label for="content">Content</label>
+             <textarea class="form-control" id="exampleTextarea" rows="10" name="content" id="content" ng-model="compose.content"></textarea>
+          </div>
+
+          <button type="button" class="btn btn-danger pull-xs-right" ng-click="showComposeForm()">Close</button>
+          <button type="submit" class="btn btn-primary">Send</button>
+        </fieldset>
+      </form>
+    </div>
+
+  </div>
+
+</body>
+
+<style media="screen">
+  header {
+    margin-bottom: 20px
+  }
+
+  .row {
+    margin: 0
+  }
+
+  .loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    z-index: 999;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .compose{
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    width: 90%;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    z-index: 999;
+    border-radius: .25rem;
+    padding: 1.5rem;
+  }
+</style>
+
+</html>

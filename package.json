@@ -1,0 +1,35 @@
+{
+  "name": "email-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run server",
+    "electron": "electron dist/index.html",
+    "install-all": "npm install && cd ws-proxy && npm install",
+    "build": "webpack",
+    "server": "cd ws-proxy && npm start",
+    "build-all": "npm run install-all && npm run build && npm start"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.8",
+    "emailjs-addressparser": "^1.0.1",
+    "emailjs-imap-client": "^2.0.2",
+    "emailjs-imap-handler": "^1.0.0",
+    "emailjs-mime-codec": "^1.0.2",
+    "emailjs-smtp-client": "^1.0.0",
+    "emailjs-stringencoding": "^1.0.1",
+    "emailjs-tcp-socket": "^1.0.2",
+    "emailjs-utf7": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.14.0",
+    "electron": "^1.4.1",
+    "html-webpack-plugin": "^2.22.0",
+    "webpack": "^1.13.2"
+  }
+}
