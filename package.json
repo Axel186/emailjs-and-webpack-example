@@ -16,7 +16,7 @@
   "dependencies": {
     "angular": "^1.5.8",
     "emailjs-addressparser": "^1.0.1",
-    "emailjs-imap-client": "^2.0.2",
+    "emailjs-imap-client": "2.0.2",
     "emailjs-imap-handler": "^1.0.0",
     "emailjs-mime-codec": "^1.0.2",
     "emailjs-smtp-client": "^1.0.0",
